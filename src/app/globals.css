@@ -1,3 +1,4 @@
+/* stylelint-disable at-rule-no-unknown */
 @import "tailwindcss";
 
 :root {
@@ -5,12 +6,6 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -23,4 +18,201 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Palette app styles */
+.page-root {
+  max-width: 1100px;
+  margin: 32px auto;
+  padding: 0 20px;
+}
+
+.page-header h1 {
+  margin: 0 0 6px 0;
+  font-size: 28px;
+}
+
+.page-header .lead {
+  margin: 0 0 18px 0;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.palette-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.9));
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.palette-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(16, 24, 40, 0.12);
+}
+
+.palette-swatch-row {
+  display: flex;
+  height: 120px;
+}
+
+.swatch {
+  flex: 1 1 0;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+}
+
+.swatch-hex {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  background: rgba(0, 0, 0, 0.38);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.palette-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+}
+
+.palette-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.fav-btn {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  margin-left: 8px;
+  font-size: 16px;
+}
+
+.delete-btn:hover {
+  opacity: 0.85;
+}
+
+/* Dark mode tweaks */
+@media (prefers-color-scheme: dark) {
+  .page-root {
+    color: var(--foreground);
+  }
+
+  .page-header .lead {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .palette-card {
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.6), rgba(10, 10, 10, 0.4));
+  }
+
+  .swatch-hex {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+}
+
+/* Creator */
+.palette-creator {
+  border: 1px dashed rgba(0, 0, 0, 0.06);
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.creator-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.creator-name {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #e6e6e6;
+}
+
+.creator-colors {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.creator-color-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.creator-hex {
+  width: 110px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.creator-remove {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.creator-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.add-color,
+.save-palette {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.add-color {
+  background: #f3f4f6;
+}
+
+.save-palette {
+  background: #111827;
+  color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+
+  .creator-name,
+  .creator-hex {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: #fff;
+  }
+
+  .palette-creator {
+    border-color: rgba(255, 255, 255, 0.04);
+  }
+
+  .add-color {
+    background: rgba(255, 255, 255, 0.03);
+  }
 }
