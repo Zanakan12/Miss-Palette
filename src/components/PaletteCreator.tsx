@@ -24,7 +24,8 @@ export default function PaletteCreator({ onSave }: { onSave?: (p: Palette) => vo
 
     function removeColor(index: number) {
         if (colors.length <= 1) return;
-        setColors(colors.filter((_, i) => i !== index));
+        // remove by slicing to avoid unused callback parameters
+        setColors([...colors.slice(0, index), ...colors.slice(index + 1)]);
     }
 
     async function savePalette() {
@@ -42,7 +43,7 @@ export default function PaletteCreator({ onSave }: { onSave?: (p: Palette) => vo
             setColors(["#ff6b6b", "#ffa94d", "#ffd43b", "#70efde", "#4dabf7"]);
             if (onSave) onSave(palette);
             return;
-        } catch (e) {
+        } catch {
             // fallback to localStorage
             try {
                 const raw = localStorage.getItem("userPalettes") || "[]";
@@ -52,7 +53,7 @@ export default function PaletteCreator({ onSave }: { onSave?: (p: Palette) => vo
                 setName("");
                 setColors(["#ff6b6b", "#ffa94d", "#ffd43b", "#70efde", "#4dabf7"]);
                 if (onSave) onSave(palette);
-            } catch (_) {
+            } catch {
                 console.error("Could not save palette");
             }
         }

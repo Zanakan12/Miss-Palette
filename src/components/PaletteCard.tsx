@@ -16,7 +16,7 @@ export default function PaletteCard({ palette, onDelete }: { palette: Palette; o
         try {
             const favs = JSON.parse(localStorage.getItem("favPalettes") || "[]");
             setFav(favs.includes(palette.id));
-        } catch (_) {
+        } catch {
             setFav(false);
         }
     }, [palette.id]);

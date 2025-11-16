@@ -21,8 +21,8 @@ export async function GET() {
     console.error("GET /api/palettes error:", e);
     // Prisma error P2021 means the table does not exist in the current DB
     // Provide a clearer response to help debugging in development.
-    const errAny = e as any;
-    if (errAny && errAny.code === "P2021") {
+    const err = e as { code?: string; message?: string };
+    if (err && err.code === "P2021") {
       // Inform the caller and give a hint for local dev initialization
       const msg =
         "Database schema not found (missing table). Run `npm run init:db:dev` or `npm run init-db` depending on your setup.";

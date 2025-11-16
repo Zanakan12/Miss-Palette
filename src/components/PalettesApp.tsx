@@ -26,7 +26,7 @@ export default function PalettesApp() {
                     const data = await res.json() as Palette[];
                     if (mounted) return setUserPalettes(data);
                 }
-            } catch (_) {
+            } catch {
                 // ignore and fallback to localStorage
             }
 
@@ -34,7 +34,7 @@ export default function PalettesApp() {
                 const raw = localStorage.getItem("userPalettes") || "[]";
                 const arr = JSON.parse(raw) as Palette[];
                 if (mounted) setUserPalettes(arr);
-            } catch (_) {
+            } catch {
                 if (mounted) setUserPalettes([]);
             }
         })();
@@ -52,7 +52,7 @@ export default function PalettesApp() {
                 if (!res.ok) throw new Error('Server delete failed');
                 setUserPalettes((s) => s.filter((x) => x.id !== id));
                 return;
-            } catch (_) {
+            } catch {
                 // fallback to localStorage
                 try {
                     const raw = localStorage.getItem("userPalettes") || "[]";
@@ -60,7 +60,7 @@ export default function PalettesApp() {
                     const next = arr.filter((x) => x.id !== id);
                     localStorage.setItem("userPalettes", JSON.stringify(next));
                     setUserPalettes((s) => s.filter((x) => x.id !== id));
-                } catch (__) {
+                } catch {
                     console.error("Could not delete palette");
                 }
             }
