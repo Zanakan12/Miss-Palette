@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "init-db": "node scripts/init_db.js"
+    "init-db": "node scripts/init_db.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev --name init",
+    "prisma:db:push": "prisma db push",
+    "prisma:studio": "prisma studio",
+    "init:db:dev": "npm run prisma:generate && npm run prisma:db:push"
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",

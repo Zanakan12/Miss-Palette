@@ -1,0 +1,74 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy to server
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH || format('/home/{0}/miss-palette', secrets.SSH_USER) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Archive repository (sources only)
+        run: |
+          # create an archive of the repository contents (tracked files)
+          git ls-files -z | xargs -0 tar -czf repo.tar.gz
+
+      - name: Copy archive to remote server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "repo.tar.gz"
+          target: "${{ env.DEPLOY_PATH }}"
+
+      - name: Deploy on remote server (untar + docker compose up)
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            TARGET="${{ env.DEPLOY_PATH }}"
+            mkdir -p "$TARGET"
+            # copy archive into the target directory (scp already placed it there), ensure ownership/perm
+            if [ -f "$TARGET/repo.tar.gz" ]; then
+              tar -xzf "$TARGET/repo.tar.gz" -C "$TARGET"
+            else
+              # sometimes scp-action copies to the home folder; try to find repo.tar.gz
+              if [ -f "$HOME/repo.tar.gz" ]; then
+                tar -xzf "$HOME/repo.tar.gz" -C "$TARGET"
+                mv "$HOME/repo.tar.gz" "$TARGET/repo.tar.gz" || true
+              fi
+            fi
+
+            cd "$TARGET"
+            # Optional: install/update env vars or secrets on the server
+            # Ensure Docker and Docker Compose are available on the server
+            docker compose pull || true
+            docker compose up -d --build
